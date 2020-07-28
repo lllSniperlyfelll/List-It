@@ -10,6 +10,7 @@ import {
   Badge,
   FAB,
   Portal,
+  Dialog,
 } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/AntDesign';
 
@@ -81,7 +82,7 @@ export default class NewList extends Component {
   };
   render() {
     const {listType} = this.props.route.params;
-    const modalTitle = listType === 'todo' ? 'New task' : 'New item';
+    const modalTitle = listType === 'todo' ? 'Add new task' : 'Add new item';
 
     return (
       <>
@@ -103,14 +104,12 @@ export default class NewList extends Component {
           <View style={{padding: 15}}>
             <TextInput
               label="Name your list ..."
-              mode="outlined"
+          
               value={this.state.nameOfTheList}
               onChangeText={(text) => this.setState({nameOfTheList: text})}
             />
           </View>
-          <View style={{paddingTop: 10, paddingBottom: 10}}>
-            <Divider style={{backgroundColor: 'grey'}} />
-          </View>
+
           <View style={{padding: 15}}>
             <View style={{flex: 1, flexDirection: 'row'}}>
               <View
@@ -142,7 +141,7 @@ export default class NewList extends Component {
                     alignSelf: 'flex-end',
                   }}>
                   <Button
-                    color="white"
+                    mode="contained"
                     icon={() => <Icon name="save" color="white" size={17} />}
                     style={{
                       alignSelf: 'center',
@@ -158,6 +157,7 @@ export default class NewList extends Component {
             </View>
             {this.getListItems()}
           </View>
+
           <Modal
             visible={this.state.modalVisibility}
             animationType="fade"
@@ -167,35 +167,33 @@ export default class NewList extends Component {
                 flex: 1,
                 backgroundColor: 'rgba(0,0,0,0.5)',
                 justifyContent: 'center',
-                padding: 15,
+                padding: 5,
               }}>
-              <Card style={{padding: 2, elevation: 10}}>
-                <Card.Title title={modalTitle} />
-                <Card.Content>
+              <Dialog visible={this.state.modalVisibility}>
+                <Dialog.Title>{modalTitle}</Dialog.Title>
+                <Dialog.Content>
                   <TextInput
                     label="Enter item name ..."
-                    mode="outlined"
+                    
+                    style={{backgroundColor:"white"}}
                     onChangeText={(text) =>
                       this.setState({newItemToBeAdded: text})
                     }
                   />
-                </Card.Content>
-                <Card.Actions
-                  style={{
-                    textAign: 'right',
-                    justifyContent: 'flex-end',
-                    paddingTop: 15,
-                  }}>
+                </Dialog.Content>
+                <Dialog.Actions>
                   <Button onPress={() => this.showModal()}>Cancel</Button>
                   <Button
                     onPress={() => {
                       this.addItemToList();
                       this.showModal();
-                    }}>
+                    }}
+                    style={{marginLeft: 8, marginRight: 4}}
+                  >
                     Add
                   </Button>
-                </Card.Actions>
-              </Card>
+                </Dialog.Actions>
+              </Dialog>
             </View>
           </Modal>
         </ScrollView>

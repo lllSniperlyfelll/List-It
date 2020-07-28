@@ -9,12 +9,15 @@ import {
 import {Card, Surface, Title, List, Badge, Button} from 'react-native-paper';
 import GroceryImage from '../../assets/grocery_card_image.jpg';
 import TodoImage from '../../assets/todo_card_img.jpeg';
+import Swipeout from 'react-native-swipeout';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default class ViewList extends Component {
   state = {
     listId: null,
     listType: null,
     imageUrl: null,
+    strikedItems: [],
     newAddedItemsList: [
       {
         id: 1,
@@ -53,8 +56,141 @@ export default class ViewList extends Component {
         description: 'some discreption to the given item',
       },
     ],
+    closeSwipeout: true,
   };
 
+  getSwipeoutsRightButtons = (elementId) => {
+    return (
+      <>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'flex-start',
+          }}>
+          <Button
+            mode="contained"
+            style={{
+              color: 'transparent',
+              backgroundColor: 'red',
+              justifyContent: 'center',
+              alignContent: 'center',
+              alignItems: 'center',
+              padding: 5,
+            }}
+            onPress={() => this.deleteItem(elementId)}>
+            <Icon
+              name="trash-o"
+              size={20}
+              color="white"
+              style={{alignSelf: 'center'}}
+            />
+          </Button>
+        </View>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'flex-start',
+          }}>
+          <Button
+            mode="contained"
+            style={{
+              color: 'transparent',
+              backgroundColor: 'crimson',
+              justifyContent: 'center',
+              alignContent: 'center',
+              alignItems: 'center',
+              padding: 5,
+            }}
+            onPress={() => this.unStrikeItem(elementId)}>
+            <Icon
+              name="times"
+              size={20}
+              color="white"
+              style={{alignSelf: 'center'}}
+            />
+          </Button>
+        </View>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'flex-start',
+          }}>
+          <Button
+            mode="contained"
+            style={{
+              color: 'transparent',
+              backgroundColor: '#4caf50',
+              justifyContent: 'center',
+              alignContent: 'center',
+              alignItems: 'center',
+              padding: 5,
+            }}
+            onPress={() => this.strikeItem(elementId)}>
+            <Icon
+              name="check"
+              size={20}
+              color="white"
+              style={{alignSelf: 'center'}}
+            />
+          </Button>
+        </View>
+      </>
+    );
+  };
+
+  getListItems() {
+    const map = [];
+    const {strikedItems, newAddedItemsList, closeSwipeout} = this.state;
+    for (let item in newAddedItemsList) {
+      //alert(JSON.stringify(strikedItems));
+      const itemId = newAddedItemsList[item].id;
+      const strikeTextStyle =
+        strikedItems.filter((singleItem) => singleItem.id === itemId).length > 0
+          ? 'line-through'
+          : 'none';
+      const swipeoutRightButtons = [
+        {
+          component: (
+            <View style={{flex: 1, flexDirection: 'row'}}>
+              {this.getSwipeoutsRightButtons(itemId)}
+            </View>
+          ),
+          backgroundColor: 'transparent',
+        },
+      ];
+
+      //alert('Rerender list items');
+      map.push(
+        <Swipeout
+          right={swipeoutRightButtons}
+          close={closeSwipeout}
+          backgroundColor="transparent"
+          buttonWidth={200}
+          autoClose={true}
+          sensitivity={10}>
+          <Card style={{marginBottom: 15}} key={itemId.toString()}>
+            <Card.Content>
+              <List.Item
+                title={
+                  <Text
+                    style={{
+                      color: 'grey',
+                      textDecorationLine: strikeTextStyle,
+                    }}>
+                    {newAddedItemsList[item].name}
+                  </Text>
+                }
+                style={{padding: 0}}
+                titleNumberOfLines={50}
+                left={() => this.listNumber(item)}
+              />
+            </Card.Content>
+          </Card>
+        </Swipeout>,
+      );
+    }
+    return map;
+  }
   componentDidMount() {
     const {listType} = this.props.routes.params;
     const {listId} = this.props.routes.state.routes[1].params;
@@ -64,47 +200,6 @@ export default class ViewList extends Component {
       listType,
       imageUrl,
     });
-  }
-
-  listNumber = (id) => {
-    return (
-      <Badge
-        size={30}
-        style={{
-          alignSelf: 'center',
-          backgroundColor:
-            this.state.listType === 'todo' ? '#2196F3' : '#00C85E',
-          color: 'white',
-        }}>
-        {id}
-      </Badge>
-    );
-  };
-
-  getListItems() {
-    const map = [];
-    for (let item in this.state.newAddedItemsList) {
-      console.log(item);
-      map.push(
-        <Card
-          style={{marginBottom: 15}}
-          key={this.state.newAddedItemsList[item].id.toString()}>
-          <Card.Content>
-            <List.Item
-              title={
-                <Text style={{color: 'grey'}}>
-                  {this.state.newAddedItemsList[item].name}
-                </Text>
-              }
-              style={{padding: 0}}
-              titleNumberOfLines={50}
-              left={() => this.listNumber(item)}
-            />
-          </Card.Content>
-        </Card>,
-      );
-    }
-    return map;
   }
 
   render() {
@@ -138,6 +233,44 @@ export default class ViewList extends Component {
       </ScrollView>
     );
   }
+  strikeItem(elementId) {
+    const {strikedItems, closeSwipeout} = this.state;
+    this.setState({
+      strikedItems: [...strikedItems, {id: elementId}],
+      closeSwipeout: true,
+    });
+  }
+
+  unStrikeItem(elementId) {
+    const {strikedItems, closeSwipeout} = this.state;
+    if (strikedItems.length > 0) {
+      this.setState({
+        strikedItems: strikedItems.filter((item) => item.id !== elementId),
+        closeSwipeout: true,
+      });
+    }
+  }
+
+  deleteItem(elementId) {
+    const { newAddedItemsList } = this.state;
+    this.setState({
+      newAddedItemsList: newAddedItemsList.filter(item => item.id !== elementId)
+    })
+  }
+  listNumber = (id) => {
+    return (
+      <Badge
+        size={30}
+        style={{
+          alignSelf: 'center',
+          backgroundColor:
+            this.state.listType === 'todo' ? '#2196F3' : '#00C85E',
+          color: 'white',
+        }}>
+        {id}
+      </Badge>
+    );
+  };
 }
 
 const styles = StyleSheet.create({
