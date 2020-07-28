@@ -205,6 +205,9 @@ export default class ViewList extends Component {
     });
   }
 
+/**
+ * Added basic redux with static state
+ */
   render() {
     const {imageUrl} = this.state;
     return (
