@@ -7,24 +7,12 @@
  */
 
 import React from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-} from 'react-native';
+import {View} from 'react-native';
 
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
 import Dashboard from './Components/Dashboard';
 import {Provider as PaperProvider, DefaultTheme} from 'react-native-paper';
+import Store from './Store';
+import {Provider} from 'react-redux';
 
 const theme = {
   ...DefaultTheme,
@@ -36,13 +24,17 @@ const theme = {
   },
 };
 
+const {store} = Store();
+
 const App = () => {
   return (
-    <PaperProvider theme={theme}>
-      <View style={{backgroundColor: 'white', flex: 1}}>
-        <Dashboard />
-      </View>
-    </PaperProvider>
+    <Provider store={store}>
+      <PaperProvider theme={theme}>
+        <View style={{backgroundColor: 'white', flex: 1}}>
+          <Dashboard />
+        </View>
+      </PaperProvider>
+    </Provider>
   );
 };
 

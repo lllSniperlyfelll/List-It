@@ -4,12 +4,57 @@ import {
   INIT_TODO_LIST,
 } from '../Actions/ActionTypes';
 
-initialState = {
-  todoLists: [],
-  isLoading: true,
+initState = {
+  todoLists: [
+    {
+      id: 1,
+      name: 'Todo list 1 ',
+      listItems: [
+        {
+          id: 1,
+          name:
+            'item item itemitemitemitem itemitemitemitem temitemitem itemitemitemitem',
+          description: 'some discreption to the given item',
+        },
+        {
+          id: 3,
+          name: 'item',
+          description: 'some discreption to the given item',
+        },
+        {
+          id: 4,
+          name: 'item',
+          description: 'some discreption to the given item',
+        },
+      ],
+    },
+    {
+      id: 2,
+      name: 'Todo list 2 ',
+      listItems: [
+        {
+          id: 1,
+          name:
+            'item item itemitemitemitem itemitemitemitem temitemitem itemitemitemitem',
+          description: 'some discreption to the given item',
+        },
+        {
+          id: 3,
+          name: 'item',
+          description: 'some discreption to the given item',
+        },
+        {
+          id: 4,
+          name: 'item',
+          description: 'some discreption to the given item',
+        },
+      ],
+    },
+  ],
+  isLoading: false,
 };
 
-export default function (state = initialState, actions) {
+export default function (state = initState, actions) {
   switch (actions.type) {
     case INIT_TODO_LIST:
       return {
@@ -34,6 +79,6 @@ export default function (state = initialState, actions) {
         todoLists: newTodoList,
       };
     default:
-      return state.todoLists;
+      return state;
   }
 }

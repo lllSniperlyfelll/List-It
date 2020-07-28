@@ -151,7 +151,7 @@ export default class ViewList extends Component {
       const swipeoutRightButtons = [
         {
           component: (
-            <View style={{flex: 1, flexDirection: 'row'}}>
+            <View style={{flex: 1, flexDirection: 'row-reverse'}}>
               {this.getSwipeoutsRightButtons(itemId)}
             </View>
           ),
@@ -168,7 +168,10 @@ export default class ViewList extends Component {
           buttonWidth={200}
           autoClose={true}
           sensitivity={10}>
-          <Card style={{marginBottom: 15}} key={itemId.toString()}>
+          <Card
+            style={{marginBottom: 15}}
+            key={itemId.toString()}
+            onPress={() => this.setState({closeSwipeout: true})}>
             <Card.Content>
               <List.Item
                 title={
@@ -212,7 +215,7 @@ export default class ViewList extends Component {
             style={styles.backgroundImage}
             imageStyle={{borderRadius: 5}}>
             <Surface style={styles.conatinerOnImage}>
-              <Title style={styles.listTitle}>Monday List</Title>
+              <Title style={styles.listTitle}>{this.state.listType}</Title>
             </Surface>
           </ImageBackground>
         </View>
@@ -252,10 +255,12 @@ export default class ViewList extends Component {
   }
 
   deleteItem(elementId) {
-    const { newAddedItemsList } = this.state;
+    const {newAddedItemsList} = this.state;
     this.setState({
-      newAddedItemsList: newAddedItemsList.filter(item => item.id !== elementId)
-    })
+      newAddedItemsList: newAddedItemsList.filter(
+        (item) => item.id !== elementId,
+      ),
+    });
   }
   listNumber = (id) => {
     return (

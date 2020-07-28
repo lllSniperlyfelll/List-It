@@ -13,6 +13,8 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import {createStackNavigator} from '@react-navigation/stack';
 import NewList from './NewList';
 import ViewList from './ViewList';
+import {connect} from 'react-redux';
+import Loading from '../Loading';
 
 /**
  * This component will show already created lists
@@ -21,29 +23,9 @@ import ViewList from './ViewList';
 class CreateListUI extends Component {
   state = {
     btnColor: '#4caf50',
+    alreadyCreatedLists: null,
+    listType: null,
   };
-  tempList = [
-    {
-      id: 1,
-      name: 'item',
-      description: 'some discreption to the given item',
-    },
-    {
-      id: 3,
-      name: 'item',
-      description: 'some discreption to the given item',
-    },
-    {
-      id: 4,
-      name: 'item',
-      description: 'some discreption to the given item',
-    },
-    {
-      id: 5,
-      name: 'item',
-      description: 'some discreption to the given item',
-    },
-  ];
 
   getColor = () => {
     const colors = ['#2196F3', 'crimson', '#4caf50', '#009688', '#673ab7'];
@@ -127,7 +109,9 @@ class CreateListUI extends Component {
                 style={{padding: 0}}
                 left={() => <List.Icon icon="eye" color="#009688" />}
                 onPress={() =>
-                  this.props.navigation.navigate('View List', {listId: item.id})
+                  this.props.navigation.navigate('View List', {
+                    listId: item.id
+                  })
                 }
               />
               <List.Item
@@ -184,75 +168,109 @@ class CreateListUI extends Component {
   };
 
   componentDidMount() {
-    const {listType} = this.props.route.params;
+    const {listType} = this.props;
     const btnColor = listType === 'todo' ? '#e91e63' : '#4caf50';
     this.setState({listType, btnColor});
+    if (this.props.listToRender) {
+      //alert(this.props.listToRender)
+      this.setState({
+        alreadyCreatedLists: this.props.listToRender,
+        listType,
+      });
+    }
   }
 
   render() {
-    const list = this.tempList
-      ? this.renderAlreadyPresentList(this.tempList)
-      : this.renderNoList();
-    return (
-      <>
-        <View
-          style={{
-            flex: 1,
-          }}>
-          <ScrollView
-            contentContainerStyle={{
-              flexGrow: 1,
+    if (this.state.alreadyCreatedLists) {
+      const {alreadyCreatedLists} = this.state;
+      const list =
+        alreadyCreatedLists.length > 0
+          ? this.renderAlreadyPresentList(this.state.alreadyCreatedLists)
+          : this.renderNoList();
+      return (
+        <>
+          <View
+            style={{
+              flex: 1,
             }}>
-            {list}
-          </ScrollView>
-        </View>
-      </>
-    );
+            <ScrollView
+              contentContainerStyle={{
+                flexGrow: 1,
+              }}>
+              {list}
+            </ScrollView>
+          </View>
+        </>
+      );
+    } else {
+      return <Loading />;
+    }
   }
 }
-export default function CreateList(props) {
-  const createListStack = createStackNavigator();
-  const {listType} = props.route.params;
-  const title = `Your ${listType === 'todo' ? 'todo' : 'grocery'} lists`;
-
-  return (
-    <createListStack.Navigator initialRouteName="creare list">
-      <createListStack.Screen
-        name="creare list"
-        component={() => <CreateListUI {...props} />}
-        options={() => ({
-          title,
-          headerStyle: {
-            backgroundColor: '#2196f3',
-            elevation: 6,
-          },
-          headerTintColor: 'white',
-        })}
-      />
-      <createListStack.Screen
-        name="new list"
-        component={() => <NewList {...props} />}
-        options={{
-          headerTitle: 'Create new list',
-          headerStyle: {
-            backgroundColor: '#2196f3',
-            elevation: 6,
-          },
-          headerTintColor: 'white',
-        }}
-      />
-      <createListStack.Screen
-        name="View List"
-        component={() => <ViewList routes={props.route} />}
-        options={{
-          headerTitle: 'View list',
-          headerStyle: {
-            backgroundColor: '#2196f3',
-            elevation: 6,
-          },
-          headerTintColor: 'white',
-        }}
-      />
-    </createListStack.Navigator>
-  );
+function CreateList(props) {
+  if (props.allTodoLists && props.allGroceryLists) {
+    //alert(JSON.stringify(props.allGroceryLists));
+    const createListStack = createStackNavigator();
+    const {listType} = props.route.params;
+    const title = `Your ${listType === 'todo' ? 'todo' : 'grocery'} lists`;
+    return (
+      <createListStack.Navigator initialRouteName="create list">
+        <createListStack.Screen
+          name="create list"
+          component={() => (
+            <CreateListUI
+              listType={listType}
+              listToRender={
+                listType === 'todo'
+                  ? props.allTodoLists.todoLists
+                  : props.allGroceryLists.groceryLists
+              }
+              navigation={props.navigation}
+            />
+          )}
+          options={() => ({
+            title,
+            headerStyle: {
+              backgroundColor: '#2196f3',
+              elevation: 6,
+            },
+            headerTintColor: 'white',
+          })}
+        />
+        <createListStack.Screen
+          name="new list"
+          component={() => <NewList {...props} />}
+          options={{
+            headerTitle: 'Create new list',
+            headerStyle: {
+              backgroundColor: '#2196f3',
+              elevation: 6,
+            },
+            headerTintColor: 'white',
+          }}
+        />
+        <createListStack.Screen
+          name="View List"
+          component={() => <ViewList routes={props.route} />}
+          options={{
+            headerTitle: 'View list',
+            headerStyle: {
+              backgroundColor: '#2196f3',
+              elevation: 6,
+            },
+            headerTintColor: 'white',
+          }}
+        />
+      </createListStack.Navigator>
+    );
+  } else {
+    return <Loading />;
+  }
 }
+
+const mapStateToProps = (state) => ({
+  allTodoLists: state.todoLists,
+  allGroceryLists: state.groceryLists,
+});
+
+export default connect(mapStateToProps)(CreateList);
