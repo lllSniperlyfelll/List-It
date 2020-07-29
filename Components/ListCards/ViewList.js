@@ -267,7 +267,7 @@ class ViewList extends Component {
             this.state.listType === 'todo' ? '#2196F3' : '#00C85E',
           color: 'white',
         }}>
-        {id}
+        {new Number(id) + 1}
       </Badge>
     );
   };

@@ -105,7 +105,7 @@ class CreateListUI extends Component {
           <Card>
             <List.Accordion
               title={item.name}
-              left={() => this.listNumber(item.id.toString())}>
+              left={() => this.listNumber((index + 1).toString())}>
               <List.Item
                 title={<Text style={{color: 'grey'}}>View</Text>}
                 style={{padding: 0}}
@@ -214,10 +214,13 @@ class CreateListUI extends Component {
 }
 function CreateList(props) {
   if (props.allTodoLists && props.allGroceryLists) {
-    //alert(JSON.stringify(props.allGroceryLists));
     const createListStack = createStackNavigator();
     const {listType} = props.route.params;
     const title = `Your ${listType === 'todo' ? 'todo' : 'grocery'} lists`;
+    const storedListLength =
+      listType === 'todo'
+        ? props.allTodoLists.todoLists.length
+        : props.allGroceryLists.groceryLists.length;
     return (
       <createListStack.Navigator initialRouteName="create list">
         <createListStack.Screen
@@ -245,7 +248,13 @@ function CreateList(props) {
         />
         <createListStack.Screen
           name="new list"
-          component={() => <NewList {...props} />}
+          component={() => (
+            <NewList
+              navigation={props.navigation}
+              listType={listType}
+              storedListLength={storedListLength}
+            />
+          )}
           options={{
             headerTitle: 'Create new list',
             headerStyle: {
@@ -257,7 +266,9 @@ function CreateList(props) {
         />
         <createListStack.Screen
           name="View List"
-          component={() => <ViewList routes={props.route} navigation = {props.navigation} />}
+          component={() => (
+            <ViewList routes={props.route} navigation={props.navigation} />
+          )}
           options={{
             headerTitle: 'View list',
             headerStyle: {

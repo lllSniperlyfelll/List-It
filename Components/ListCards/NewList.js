@@ -16,34 +16,33 @@ import Icon from 'react-native-vector-icons/AntDesign';
 
 export default class NewList extends Component {
   state = {
+    listType: null,
     nameOfTheList: '',
     modalVisibility: false,
     newItemToBeAdded: null,
-    newAddedItemsList: [
-      {
-        id: 1,
-        name:
-          'item item itemitemitemitem itemitemitemitem temitemitem itemitemitemitem',
-        description: 'some discreption to the given item',
-      },
-      {
-        id: 3,
-        name: 'item',
-        description: 'some discreption to the given item',
-      },
-      {
-        id: 4,
-        name: 'item',
-        description: 'some discreption to the given item',
-      },
-      {
-        id: 5,
-        name: 'item',
-        description: 'some discreption to the given item',
-      },
-    ],
+    newAddedItemsList: [],
+    newListId: null
   };
+  /**
+   *{
+   * id: idOfList as number,
+   * name: Name of list,
+   * createdOn: Date when list is created
+   * listItems:[
+   *    {
+   *      id: id of each and every item in list,
+   *      name: name of item in list
+   *    }
+   *  ]
+   * }
+   */
 
+  componentDidMount() {
+    const {listType, storedListLength} = this.props;
+    if (listType) {
+      this.setState({listType, newListId: storedListLength + 1});
+    }
+  }
   pushToReduxStore() {
     /**
      * This function must be called
@@ -56,20 +55,28 @@ export default class NewList extends Component {
      */
     alert('Saved');
   }
+
+  updateIds = (list) => {
+    for (let itr in list) {
+      list[itr].id = itr
+    }
+    return list;
+  }
   removeItemFromList = (idOfItemToBeRemoved) => {
     const {newAddedItemsList} = this.state;
     const removedItemList = newAddedItemsList.filter(
       (item) => item.id !== idOfItemToBeRemoved,
     );
     this.setState({
-      newAddedItemsList: removedItemList,
+      newAddedItemsList: this.updateIds(removedItemList),
     });
+
   };
   addItemToList = () => {
     const {newAddedItemsList, newItemToBeAdded} = this.state;
     if (newItemToBeAdded) {
       const newItem = {
-        id: newAddedItemsList.length + 2,
+        id: newAddedItemsList.length + 1,
         name: newItemToBeAdded,
       };
       this.setState({
@@ -81,7 +88,8 @@ export default class NewList extends Component {
     }
   };
   render() {
-    const {listType} = this.props.route.params;
+    //alert(JSON.stringify(this.state.newAddedItemsList))
+    const {listType} = this.state;
     const modalTitle = listType === 'todo' ? 'Add new task' : 'Add new item';
 
     return (
@@ -104,7 +112,6 @@ export default class NewList extends Component {
           <View style={{padding: 15}}>
             <TextInput
               label="Name your list ..."
-          
               value={this.state.nameOfTheList}
               onChangeText={(text) => this.setState({nameOfTheList: text})}
             />
@@ -174,8 +181,7 @@ export default class NewList extends Component {
                 <Dialog.Content>
                   <TextInput
                     label="Enter item name ..."
-                    
-                    style={{backgroundColor:"white"}}
+                    style={{backgroundColor: 'white'}}
                     onChangeText={(text) =>
                       this.setState({newItemToBeAdded: text})
                     }
@@ -188,8 +194,7 @@ export default class NewList extends Component {
                       this.addItemToList();
                       this.showModal();
                     }}
-                    style={{marginLeft: 8, marginRight: 4}}
-                  >
+                    style={{marginLeft: 8, marginRight: 4}}>
                     Add
                   </Button>
                 </Dialog.Actions>
@@ -207,12 +212,13 @@ export default class NewList extends Component {
   };
   getListItems() {
     const map = [];
+    console.log(JSON.stringify(this.state.newAddedItemsList))
     for (let item in this.state.newAddedItemsList) {
-      console.log(item);
+      //console.log(item);
       map.push(
         <Card
           style={{marginBottom: 15}}
-          key={this.state.newAddedItemsList[item].id.toString()}>
+          key={(this.state.newAddedItemsList[item].id + 10 ).toString()}>
           <Card.Content>
             <List.Item
               title={
@@ -250,8 +256,34 @@ export default class NewList extends Component {
           backgroundColor: '#2196F3',
           color: 'white',
         }}>
-        {id}
+        {new Number(id) + 1}
       </Badge>
     );
   };
 }
+
+/**
+ * [
+      {
+        id: 1,
+        name:
+          'item item itemitemitemitem itemitemitemitem temitemitem itemitemitemitem',
+        description: 'some discreption to the given item',
+      },
+      {
+        id: 3,
+        name: 'item',
+        description: 'some discreption to the given item',
+      },
+      {
+        id: 4,
+        name: 'item',
+        description: 'some discreption to the given item',
+      },
+      {
+        id: 5,
+        name: 'item',
+        description: 'some discreption to the given item',
+      },
+    ],
+ */
