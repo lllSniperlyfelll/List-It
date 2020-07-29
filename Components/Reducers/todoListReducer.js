@@ -71,12 +71,11 @@ export default function (state = initState, actions) {
       };
 
     case DETELE_TODO_LIST:
-      const newTodoList = state.todoLists.filter(
-        (item) => item.id === actions.payload,
-      );
       return {
         ...state,
-        todoLists: newTodoList,
+        todoLists: state.todoLists.filter(
+          (item) => item.id !== actions.payload,
+        ),
       };
     default:
       return state;

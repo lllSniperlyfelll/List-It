@@ -15,6 +15,7 @@ import NewList from './NewList';
 import ViewList from './ViewList';
 import {connect} from 'react-redux';
 import Loading from '../Loading';
+import {deleteGroceryList, deleteTodoList} from '../Actions/ActionCreators';
 
 /**
  * This component will show already created lists
@@ -95,6 +96,7 @@ class CreateListUI extends Component {
   };
 
   renderListItems = ({item, index}) => {
+    const {delGroceryList, delTodoList} = this.props;
     return (
       <>
         <TouchableRipple
@@ -110,7 +112,7 @@ class CreateListUI extends Component {
                 left={() => <List.Icon icon="eye" color="#009688" />}
                 onPress={() =>
                   this.props.navigation.navigate('View List', {
-                    listId: item.id
+                    listId: item.id,
                   })
                 }
               />
@@ -129,7 +131,11 @@ class CreateListUI extends Component {
                 title={<Text style={{color: 'grey'}}>Delete</Text>}
                 style={{padding: 0}}
                 left={() => <List.Icon icon="delete" color="red" />}
-                onPress={() => alert('Delete')}
+                onPress={() =>
+                  this.state.listType === 'todo'
+                    ? delTodoList(item.id)
+                    : delGroceryList(item.id)
+                }
               />
             </List.Accordion>
           </Card>
@@ -172,7 +178,6 @@ class CreateListUI extends Component {
     const btnColor = listType === 'todo' ? '#e91e63' : '#4caf50';
     this.setState({listType, btnColor});
     if (this.props.listToRender) {
-      //alert(this.props.listToRender)
       this.setState({
         alreadyCreatedLists: this.props.listToRender,
         listType,
@@ -226,6 +231,7 @@ function CreateList(props) {
                   : props.allGroceryLists.groceryLists
               }
               navigation={props.navigation}
+              {...props}
             />
           )}
           options={() => ({
@@ -251,7 +257,7 @@ function CreateList(props) {
         />
         <createListStack.Screen
           name="View List"
-          component={() => <ViewList routes={props.route} />}
+          component={() => <ViewList routes={props.route} navigation = {props.navigation} />}
           options={{
             headerTitle: 'View list',
             headerStyle: {
@@ -273,4 +279,9 @@ const mapStateToProps = (state) => ({
   allGroceryLists: state.groceryLists,
 });
 
-export default connect(mapStateToProps)(CreateList);
+const mapDispatchToProps = (dispatch) => ({
+  delTodoList: (listId) => dispatch(deleteTodoList(listId)),
+  delGroceryList: (listId) => dispatch(deleteGroceryList(listId)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(CreateList);

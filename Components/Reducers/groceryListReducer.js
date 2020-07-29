@@ -62,21 +62,20 @@ export default function (state = initalState, actions) {
         isLoading: true,
       };
     case CREATE_NEW_GROCERY_LIST:
-      const uuid = Object.keys(state.groceryList).length + 5;
+      const uuid = Object.keys(state.groceryLists).length + 5;
 
       return {
         ...state,
-        groceryList: actions.payload,
+        groceryLists: actions.payload,
         isLoading: false,
       };
 
     case DETELE_GROCERY_LIST:
-      const newGroceryList = state.groceryList.filter(
-        (item) => item.id === actions.payload,
-      );
       return {
         ...state,
-        groceryList: newGroceryList,
+        groceryLists: state.groceryLists.filter(
+          (item) => item.id !== actions.payload,
+        ),
       };
     default:
       return state;

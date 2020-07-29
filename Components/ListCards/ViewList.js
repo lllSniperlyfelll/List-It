@@ -13,6 +13,7 @@ import Swipeout from 'react-native-swipeout';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {connect} from 'react-redux';
 import Loading from '../Loading';
+import {deleteGroceryList, deleteTodoList} from '../Actions/ActionCreators';
 
 class ViewList extends Component {
   state = {
@@ -158,27 +159,28 @@ class ViewList extends Component {
   }
 
   componentDidMount() {
-    try {
-      const {listType} = this.props.routes.params;
-      const {listId} = this.props.routes.state.routes[1].params;
-      //alert(listId);
-      if (this.props.allGroceryLists && this.props.allTodoLists) {
-        const {allGroceryLists, allTodoLists} = this.props;
-        const imageUrl = listType === 'todo' ? TodoImage : GroceryImage;
-        const selectedList = (listType === 'todo'
-          ? allTodoLists.todoLists
-          : allGroceryLists.groceryLists
-        ).filter((lists) => lists.id === listId)[0];
+    const {listType} = this.props.routes.params;
+    const {listId} = this.props.routes.state.routes[1].params;
+    this.setState({
+      listId,
+      listType,
+    });
+    //alert(JSON.stringify(this.props.navigation));
+    if (this.props.allGroceryLists && this.props.allTodoLists) {
+      const {allGroceryLists, allTodoLists} = this.props;
+      const imageUrl = listType === 'todo' ? TodoImage : GroceryImage;
+      const selectedList = (listType === 'todo'
+        ? allTodoLists.todoLists
+        : allGroceryLists.groceryLists
+      ).filter((lists) => lists.id === listId);
+      //alert(JSON.stringify(selectedList));
+      if (selectedList && selectedList.length > 0) {
         this.setState({
-          listId,
-          listType,
           imageUrl,
-          newAddedItemsList: selectedList.listItems,
-          listName: selectedList.name
+          newAddedItemsList: selectedList[0].listItems,
+          listName: selectedList[0].name,
         });
       }
-    } catch (e) {
-      alert('There was a problem viewing this list');
     }
   }
 
@@ -188,8 +190,8 @@ class ViewList extends Component {
    */
   render() {
     if (this.state.newAddedItemsList) {
-      const { imageUrl } = this.state;
-      const { newAddedItemsList, listName } = this.state;
+      const {imageUrl} = this.state;
+      const {newAddedItemsList, listName, listId, listType} = this.state;
       return (
         <ScrollView>
           <View style={{flex: 1, padding: 5}}>
@@ -212,7 +214,12 @@ class ViewList extends Component {
               mode="contained"
               icon="delete"
               style={{backgroundColor: 'red', marginTop: 7, color: 'white'}}
-              onPress={() => alert('delete list')}>
+              onPress={() => {
+                listType === 'todo'
+                  ? this.props.delTodoList(listId)
+                  : this.props.delGroceryList(listId);
+                this.props.navigation.navigate('create list', {listType});
+              }}>
               Delete list
             </Button>
           </View>
@@ -303,5 +310,9 @@ const mapStateToProps = (state) => ({
   allTodoLists: state.todoLists,
   allGroceryLists: state.groceryLists,
 });
+const mapDispatchToProps = (dispatch) => ({
+  delTodoList: (listId) => dispatch(deleteTodoList(listId)),
+  delGroceryList: (listId) => dispatch(deleteGroceryList(listId)),
+});
 
-export default connect(mapStateToProps)(ViewList);
+export default connect(mapStateToProps, mapDispatchToProps)(ViewList);
