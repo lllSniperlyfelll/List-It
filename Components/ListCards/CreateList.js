@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, View, FlatList, ScrollView} from 'react-native';
+import {Text, View, FlatList, ScrollView, Alert} from 'react-native';
 import {
   List,
   Title,
@@ -131,11 +131,23 @@ class CreateListUI extends Component {
                 title={<Text style={{color: 'grey'}}>Delete</Text>}
                 style={{padding: 0}}
                 left={() => <List.Icon icon="delete" color="red" />}
-                onPress={() =>
-                  this.state.listType === 'todo'
-                    ? delTodoList(item.id)
-                    : delGroceryList(item.id)
-                }
+                onPress={() => {
+                  Alert.alert('Delete List ?', 'Action cannot be undone', [
+                    {
+                      text: 'Cancel',
+                      style: 'cancel',
+                      onPress: () => console.log(''),
+                    },
+                    {
+                      text: 'Delete',
+                      style: 'default',
+                      onPress: () =>
+                        this.state.listType === 'todo'
+                          ? delTodoList(item.id)
+                          : delGroceryList(item.id),
+                    },
+                  ]);
+                }}
               />
             </List.Accordion>
           </Card>

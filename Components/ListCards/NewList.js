@@ -59,8 +59,6 @@ class NewList extends Component {
      * 1. Id -> long unique id of this list
      * 2. newAddedItemsList -> as the data
      */
-
-    //alert('Saved');
     const {listType, nameOfTheList, newListId, newAddedItemsList} = this.state;
     if (nameOfTheList == null) {
       Alert.alert('Cannot save list', '\nThe list must have a name', [
@@ -86,7 +84,13 @@ class NewList extends Component {
       listType === 'todo'
         ? this.props.addNewTodoListToStore(newList)
         : this.props.addNewGroceryListToStore(newList);
-      Alert.alert('List Saved', null, [{text: 'Ok', style: 'cancel'}]);
+      Alert.alert('List Saved', '\nYour list have been saved successfully', [
+        {
+          text: 'Ok',
+          style: 'cancel',
+          onPress: () => this.props.navigation.navigate('create list'),
+        },
+      ]);
     }
   }
 

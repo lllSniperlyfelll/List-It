@@ -5,6 +5,7 @@ import {
   ScrollView,
   ImageBackground,
   StyleSheet,
+  Alert,
 } from 'react-native';
 import {Card, Surface, Title, List, Badge, Button} from 'react-native-paper';
 import GroceryImage from '../../assets/grocery_card_image.jpg';
@@ -215,10 +216,23 @@ class ViewList extends Component {
               icon="delete"
               style={{backgroundColor: 'red', marginTop: 7, color: 'white'}}
               onPress={() => {
-                listType === 'todo'
-                  ? this.props.delTodoList(listId)
-                  : this.props.delGroceryList(listId);
-                this.props.navigation.navigate('create list', {listType});
+                Alert.alert('Delete List ?', 'Action cannot be undone', [
+                  {
+                    text: 'Cancel',
+                    style: 'cancel',
+                    onPress: () => console.log(''),
+                  },
+                  {
+                    text: 'Delete',
+                    style: 'default',
+                    onPress: () => {
+                      listType === 'todo'
+                        ? this.props.delTodoList(listId)
+                        : this.props.delGroceryList(listId);
+                      this.props.navigation.navigate('create list', {listType});
+                    },
+                  },
+                ]);
               }}>
               Delete list
             </Button>
