@@ -142,7 +142,6 @@ export default class ViewList extends Component {
     const map = [];
     const {strikedItems, newAddedItemsList, closeSwipeout} = this.state;
     for (let item in newAddedItemsList) {
-      //alert(JSON.stringify(strikedItems));
       const itemId = newAddedItemsList[item].id;
       const strikeTextStyle =
         strikedItems.filter((singleItem) => singleItem.id === itemId).length > 0
