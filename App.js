@@ -12,7 +12,9 @@ import {View} from 'react-native';
 import Dashboard from './Components/Dashboard';
 import {Provider as PaperProvider, DefaultTheme} from 'react-native-paper';
 import Store from './Store';
-import {Provider} from 'react-redux';
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/es/integration/react';
+import Loading from "./Components/Loading"
 
 const theme = {
   ...DefaultTheme,
@@ -24,16 +26,18 @@ const theme = {
   },
 };
 
-const {store} = Store();
+const {store, persistedStore} = Store();
 
 const App = () => {
   return (
     <Provider store={store}>
-      <PaperProvider theme={theme}>
-        <View style={{backgroundColor: 'white', flex: 1}}>
-          <Dashboard />
-        </View>
-      </PaperProvider>
+      <PersistGate loading={<Loading />} persistor={persistedStore}>
+        <PaperProvider theme={theme}>
+          <View style={{backgroundColor: 'white', flex: 1}}>
+            <Dashboard />
+          </View>
+        </PaperProvider>
+      </PersistGate>
     </Provider>
   );
 };

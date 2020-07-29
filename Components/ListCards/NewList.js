@@ -78,7 +78,7 @@ class NewList extends Component {
       const newList = {
         id: newListId + 2,
         name: nameOfTheList,
-        createdOn: new Date().toDateString(),
+        createdOn: new Date(),
         listItems: newAddedItemsList,
       };
       listType === 'todo'

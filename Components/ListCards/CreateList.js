@@ -16,6 +16,7 @@ import ViewList from './ViewList';
 import {connect} from 'react-redux';
 import Loading from '../Loading';
 import {deleteGroceryList, deleteTodoList} from '../Actions/ActionCreators';
+import {getFormattedDate} from '../Healper';
 
 /**
  * This component will show already created lists
@@ -95,6 +96,7 @@ class CreateListUI extends Component {
     );
   };
 
+
   renderListItems = ({item, index}) => {
     const {delGroceryList, delTodoList} = this.props;
     return (
@@ -121,11 +123,23 @@ class CreateListUI extends Component {
                   <Text
                     style={{
                       color: 'grey',
-                    }}>{`Create on: ${new Date().toDateString()}`}</Text>
+                    }}>{`Create on:  ${item.createdOn.getDate()}/${item.createdOn.getMonth()}/${item.createdOn.getFullYear()}, ${item.createdOn.getHours()}:${item.createdOn.getMinutes()} `}</Text>
                 }
                 left={() => <List.Icon icon="calendar" color="#2196F3" />}
                 style={{padding: 0, color: 'green'}}
-                onPress={() => alert('Creared on details')}
+                onPress={() =>
+                  Alert.alert(
+                    'List created on',
+                    getFormattedDate(item.createdOn),
+                    [
+                      {
+                        text: 'Ok',
+                        style: 'cancel',
+                        onPress: () => true,
+                      },
+                    ],
+                  )
+                }
               />
               <List.Item
                 title={<Text style={{color: 'grey'}}>Delete</Text>}
