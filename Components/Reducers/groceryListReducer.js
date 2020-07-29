@@ -3,6 +3,7 @@ import {
   DETELE_GROCERY_LIST,
   INIT_GROCERY_LIST,
 } from '../Actions/ActionTypes';
+import { act } from 'react-test-renderer';
 
 initalState = {
   groceryLists: [
@@ -62,11 +63,12 @@ export default function (state = initalState, actions) {
         isLoading: true,
       };
     case CREATE_NEW_GROCERY_LIST:
-      const uuid = Object.keys(state.groceryLists).length + 5;
+      //const uuid = Object.keys(state.groceryLists).length + 5;
+      //console.log(JSON.stringify(actions.payload))
 
       return {
         ...state,
-        groceryLists: actions.payload,
+        groceryLists: [...state.groceryLists,actions.payload],
         isLoading: false,
       };
 

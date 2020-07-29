@@ -62,11 +62,11 @@ export default function (state = initState, actions) {
         isLoading: true,
       };
     case CREATE_NEW_TODO_LIST:
-      const uuid = Object.keys(state.todoLists).length + 5;
-
+      //const uuid = Object.keys(state.todoLists).length + 5;
+      //console.log(JSON.stringify(actions.payload));
       return {
         ...state,
-        todoLists: actions.payload,
+        todoLists: [...state.todoLists, actions.payload],
         isLoading: false,
       };
 

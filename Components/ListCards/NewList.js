@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, ScrollView, View, Modal} from 'react-native';
+import {Text, ScrollView, View, Modal, Alert} from 'react-native';
 import {
   TextInput,
   Divider,
@@ -13,15 +13,20 @@ import {
   Dialog,
 } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/AntDesign';
+import {connect} from 'react-redux';
+import {
+  createNewTodoList,
+  createNewGroceryList,
+} from '../Actions/ActionCreators';
 
-export default class NewList extends Component {
+class NewList extends Component {
   state = {
     listType: null,
-    nameOfTheList: '',
+    nameOfTheList: null,
     modalVisibility: false,
     newItemToBeAdded: null,
     newAddedItemsList: [],
-    newListId: null
+    newListId: null,
   };
   /**
    *{
@@ -43,6 +48,7 @@ export default class NewList extends Component {
       this.setState({listType, newListId: storedListLength + 1});
     }
   }
+
   pushToReduxStore() {
     /**
      * This function must be called
@@ -53,15 +59,43 @@ export default class NewList extends Component {
      * 1. Id -> long unique id of this list
      * 2. newAddedItemsList -> as the data
      */
-    alert('Saved');
+
+    //alert('Saved');
+    const {listType, nameOfTheList, newListId, newAddedItemsList} = this.state;
+    if (nameOfTheList == null) {
+      Alert.alert('Cannot save list', '\nThe list must have a name', [
+        {
+          text: 'Ok',
+          style: 'cancel',
+        },
+      ]);
+    } else if (newAddedItemsList.length <= 0) {
+      Alert.alert('Cannot save list', '\nList must have atleast one item', [
+        {
+          text: 'Ok',
+          style: 'cancel',
+        },
+      ]);
+    } else {
+      const newList = {
+        id: newListId + 2,
+        name: nameOfTheList,
+        createdOn: new Date().toDateString(),
+        listItems: newAddedItemsList,
+      };
+      listType === 'todo'
+        ? this.props.addNewTodoListToStore(newList)
+        : this.props.addNewGroceryListToStore(newList);
+      Alert.alert('List Saved', null, [{text: 'Ok', style: 'cancel'}]);
+    }
   }
 
   updateIds = (list) => {
     for (let itr in list) {
-      list[itr].id = itr
+      list[itr].id = itr;
     }
     return list;
-  }
+  };
   removeItemFromList = (idOfItemToBeRemoved) => {
     const {newAddedItemsList} = this.state;
     const removedItemList = newAddedItemsList.filter(
@@ -70,7 +104,6 @@ export default class NewList extends Component {
     this.setState({
       newAddedItemsList: this.updateIds(removedItemList),
     });
-
   };
   addItemToList = () => {
     const {newAddedItemsList, newItemToBeAdded} = this.state;
@@ -205,20 +238,20 @@ export default class NewList extends Component {
       </>
     );
   }
-  showModal = () => {
+
+  showModal = () =>
     this.setState({
       modalVisibility: !this.state.modalVisibility,
     });
-  };
   getListItems() {
     const map = [];
-    console.log(JSON.stringify(this.state.newAddedItemsList))
+    console.log(JSON.stringify(this.state.newAddedItemsList));
     for (let item in this.state.newAddedItemsList) {
       //console.log(item);
       map.push(
         <Card
           style={{marginBottom: 15}}
-          key={(this.state.newAddedItemsList[item].id + 10 ).toString()}>
+          key={(this.state.newAddedItemsList[item].id + 10).toString()}>
           <Card.Content>
             <List.Item
               title={
@@ -247,6 +280,7 @@ export default class NewList extends Component {
     }
     return map;
   }
+
   listNumber = (id) => {
     return (
       <Badge
@@ -262,28 +296,10 @@ export default class NewList extends Component {
   };
 }
 
-/**
- * [
-      {
-        id: 1,
-        name:
-          'item item itemitemitemitem itemitemitemitem temitemitem itemitemitemitem',
-        description: 'some discreption to the given item',
-      },
-      {
-        id: 3,
-        name: 'item',
-        description: 'some discreption to the given item',
-      },
-      {
-        id: 4,
-        name: 'item',
-        description: 'some discreption to the given item',
-      },
-      {
-        id: 5,
-        name: 'item',
-        description: 'some discreption to the given item',
-      },
-    ],
- */
+const mapDispatchToProps = (dispatch) => ({
+  addNewTodoListToStore: (newList) => dispatch(createNewTodoList(newList)),
+  addNewGroceryListToStore: (newList) =>
+    dispatch(createNewGroceryList(newList)),
+});
+
+export default connect(null, mapDispatchToProps)(NewList);
