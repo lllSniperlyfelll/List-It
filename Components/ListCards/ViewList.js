@@ -11,51 +11,16 @@ import GroceryImage from '../../assets/grocery_card_image.jpg';
 import TodoImage from '../../assets/todo_card_img.jpeg';
 import Swipeout from 'react-native-swipeout';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import {connect} from 'react-redux';
+import Loading from '../Loading';
 
-export default class ViewList extends Component {
+class ViewList extends Component {
   state = {
     listId: null,
     listType: null,
     imageUrl: null,
     strikedItems: [],
-    newAddedItemsList: [
-      {
-        id: 1,
-        name:
-          'item item itemitemitemitem itemitemitemitem temitemitem itemitemitemitem',
-        description: 'some discreption to the given item',
-      },
-      {
-        id: 3,
-        name: 'item',
-        description: 'some discreption to the given item',
-      },
-      {
-        id: 4,
-        name: 'item',
-        description: 'some discreption to the given item',
-      },
-      {
-        id: 5,
-        name: 'item',
-        description: 'some discreption to the given item',
-      },
-      {
-        id: 6,
-        name: 'item',
-        description: 'some discreption to the given item',
-      },
-      {
-        id: 7,
-        name: 'item',
-        description: 'some discreption to the given item',
-      },
-      {
-        id: 8,
-        name: 'item',
-        description: 'some discreption to the given item',
-      },
-    ],
+    newAddedItemsList: null,
     closeSwipeout: true,
   };
 
@@ -157,8 +122,6 @@ export default class ViewList extends Component {
           backgroundColor: 'transparent',
         },
       ];
-
-      //alert('Rerender list items');
       map.push(
         <Swipeout
           right={swipeoutRightButtons}
@@ -193,51 +156,73 @@ export default class ViewList extends Component {
     }
     return map;
   }
+
   componentDidMount() {
-    const {listType} = this.props.routes.params;
-    const {listId} = this.props.routes.state.routes[1].params;
-    const imageUrl = listType === 'todo' ? TodoImage : GroceryImage;
-    this.setState({
-      listId,
-      listType,
-      imageUrl,
-    });
+    try {
+      const {listType} = this.props.routes.params;
+      const {listId} = this.props.routes.state.routes[1].params;
+      //alert(listId);
+      if (this.props.allGroceryLists && this.props.allTodoLists) {
+        const {allGroceryLists, allTodoLists} = this.props;
+        const imageUrl = listType === 'todo' ? TodoImage : GroceryImage;
+        const selectedList = (listType === 'todo'
+          ? allTodoLists.todoLists
+          : allGroceryLists.groceryLists
+        ).filter((lists) => lists.id === listId)[0];
+        this.setState({
+          listId,
+          listType,
+          imageUrl,
+          newAddedItemsList: selectedList.listItems,
+          listName: selectedList.name
+        });
+      }
+    } catch (e) {
+      alert('There was a problem viewing this list');
+    }
   }
 
-/**
- * Added basic redux with static state
- */
+  /**
+   * Added basic redux with static state
+   * and no user IO
+   */
   render() {
-    const {imageUrl} = this.state;
-    return (
-      <ScrollView>
-        <View style={{flex: 1, padding: 5}}>
-          <ImageBackground
-            source={imageUrl}
-            style={styles.backgroundImage}
-            imageStyle={{borderRadius: 5}}>
-            <Surface style={styles.conatinerOnImage}>
-              <Title style={styles.listTitle}>{this.state.listType}</Title>
-            </Surface>
-          </ImageBackground>
-        </View>
-        <View style={styles.dividerContainer}>
-          <View style={styles.customDivider} />
-        </View>
-        <View style={{padding: 15}}>
-          {this.getListItems()}
+    if (this.state.newAddedItemsList) {
+      const { imageUrl } = this.state;
+      const { newAddedItemsList, listName } = this.state;
+      return (
+        <ScrollView>
+          <View style={{flex: 1, padding: 5}}>
+            <ImageBackground
+              source={imageUrl}
+              style={styles.backgroundImage}
+              imageStyle={{borderRadius: 5}}>
+              <Surface style={styles.conatinerOnImage}>
+                <Title style={styles.listTitle}>{listName}</Title>
+              </Surface>
+            </ImageBackground>
+          </View>
+          <View style={styles.dividerContainer}>
+            <View style={styles.customDivider} />
+          </View>
+          <View style={{padding: 15}}>
+            {this.getListItems()}
 
-          <Button
-            mode="contained"
-            icon="delete"
-            style={{backgroundColor: 'red', marginTop: 7, color: 'white'}}
-            onPress={() => alert('delete list')}>
-            Delete list
-          </Button>
-        </View>
-      </ScrollView>
-    );
+            <Button
+              mode="contained"
+              icon="delete"
+              style={{backgroundColor: 'red', marginTop: 7, color: 'white'}}
+              onPress={() => alert('delete list')}>
+              Delete list
+            </Button>
+          </View>
+        </ScrollView>
+      );
+    } else {
+      return <Loading />;
+    }
   }
+
   strikeItem(elementId) {
     const {strikedItems, closeSwipeout} = this.state;
     this.setState({
@@ -264,6 +249,7 @@ export default class ViewList extends Component {
       ),
     });
   }
+
   listNumber = (id) => {
     return (
       <Badge
@@ -312,3 +298,10 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
 });
+
+const mapStateToProps = (state) => ({
+  allTodoLists: state.todoLists,
+  allGroceryLists: state.groceryLists,
+});
+
+export default connect(mapStateToProps)(ViewList);
