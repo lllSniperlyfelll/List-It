@@ -11,6 +11,8 @@ import {
   FAB,
   Portal,
   Dialog,
+  Banner,
+  Avatar,
 } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {connect} from 'react-redux';
@@ -27,6 +29,7 @@ class NewList extends Component {
     newItemToBeAdded: null,
     newAddedItemsList: [],
     newListId: null,
+    showInfoOfApp: true
   };
   /**
    *{
@@ -94,6 +97,32 @@ class NewList extends Component {
     }
   }
 
+  getHelp = (info) => {
+    return (
+      <Banner
+        visible={this.state.showInfoOfApp}
+        actions={[
+          {
+            label: '  Ok  ',
+            onPress: () => this.setState({showInfoOfApp: false}),
+          },
+        ]}
+        icon={() => (
+          <Avatar.Icon
+            icon="help"
+            size={30}
+            color="white"
+            style={{backgroundColor: 'crimson'}}
+          />
+        )}>
+        <Text style={{color: 'rgba(0,0,0,0.5)', fontWeight: 'bold'}}>
+          {info}
+        </Text>
+      </Banner>
+    );
+    //return null;
+  };
+
   updateIds = (list) => {
     for (let itr in list) {
       list[itr].id = itr;
@@ -146,6 +175,7 @@ class NewList extends Component {
           />
         </Portal>
         <ScrollView>
+          {this.getHelp("Add items in the list and alway's click save to save the list or you might lose your data")}
           <View style={{padding: 15}}>
             <TextInput
               label="Name your list ..."

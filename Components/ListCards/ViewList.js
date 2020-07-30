@@ -7,7 +7,16 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native';
-import {Card, Surface, Title, List, Badge, Button} from 'react-native-paper';
+import {
+  Card,
+  Surface,
+  Title,
+  List,
+  Badge,
+  Button,
+  Banner,
+  Avatar,
+} from 'react-native-paper';
 import GroceryImage from '../../assets/grocery_card_image.jpg';
 import TodoImage from '../../assets/todo_card_img.jpeg';
 import Swipeout from 'react-native-swipeout';
@@ -18,14 +27,44 @@ import {deleteGroceryList, deleteTodoList} from '../Actions/ActionCreators';
 import SocialShare from '../SocialSharing/SocialShare';
 
 class ViewList extends Component {
-  state = {
-    listId: null,
-    listType: null,
-    imageUrl: null,
-    strikedItems: [],
-    newAddedItemsList: null,
-    closeSwipeout: true,
-    listName: null
+  constructor(props) {
+    super(props);
+    this.state = {
+      listId: null,
+      listType: null,
+      imageUrl: null,
+      strikedItems: [],
+      newAddedItemsList: null,
+      closeSwipeout: false,
+      listName: null,
+      showInfoOfApp: true,
+    };
+  }
+
+  getHelp = (info) => {
+    return (
+      <Banner
+        visible={this.state.showInfoOfApp}
+        actions={[
+          {
+            label: '  Ok  ',
+            onPress: () => this.setState({showInfoOfApp: false}),
+          },
+        ]}
+        icon={() => (
+          <Avatar.Icon
+            icon="help"
+            size={30}
+            color="white"
+            style={{backgroundColor: 'crimson'}}
+          />
+        )}>
+        <Text style={{color: 'rgba(0,0,0,0.5)', fontWeight: 'bold'}}>
+          {info}
+        </Text>
+      </Banner>
+    );
+    //return null;
   };
 
   getSwipeoutsRightButtons = (elementId) => {
@@ -109,7 +148,12 @@ class ViewList extends Component {
 
   getListItems() {
     const map = [];
-    const {strikedItems, newAddedItemsList, closeSwipeout} = this.state;
+    const {
+      strikedItems,
+      newAddedItemsList,
+      closeSwipeout,
+      swipeTutorial,
+    } = this.state;
     for (let item in newAddedItemsList) {
       const itemId = newAddedItemsList[item].id;
       const strikeTextStyle =
@@ -183,6 +227,7 @@ class ViewList extends Component {
           newAddedItemsList: selectedList[0].listItems,
           listName: selectedList[0].name,
         });
+
       }
     }
   }
@@ -194,9 +239,15 @@ class ViewList extends Component {
   render() {
     if (this.state.newAddedItemsList) {
       const {imageUrl} = this.state;
-      const {newAddedItemsList, listName, listId, listType} = this.state;
+      const {
+        newAddedItemsList,
+        listName,
+        listId,
+        listType,
+      } = this.state;
       return (
         <ScrollView>
+          {this.getHelp("Swipe from 'Right to Left' on items in list to see more options.")}
           <View style={{flex: 1, padding: 5}}>
             <ImageBackground
               source={imageUrl}
@@ -240,7 +291,11 @@ class ViewList extends Component {
               Delete list
             </Button>
 
-            <SocialShare style={{ marginTop: 10 }} listToShare={newAddedItemsList} nameOfList={listName} />
+            <SocialShare
+              style={{marginTop: 10}}
+              listToShare={newAddedItemsList}
+              nameOfList={listName}
+            />
           </View>
         </ScrollView>
       );

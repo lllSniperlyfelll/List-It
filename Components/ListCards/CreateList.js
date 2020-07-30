@@ -8,6 +8,8 @@ import {
   TouchableRipple,
   Card,
   Badge,
+  Avatar,
+  Banner
 } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -27,11 +29,39 @@ class CreateListUI extends Component {
     btnColor: '#4caf50',
     alreadyCreatedLists: null,
     listType: null,
+    showInfoOfApp: true
   };
 
   getColor = () => {
     const colors = ['#2196F3', 'crimson', '#4caf50', '#009688', '#673ab7'];
     return colors[parseInt(Math.floor(Math.random() * colors.length))];
+  };
+  getHelp = () => {
+    return (
+      <Banner
+        visible={this.state.showInfoOfApp}
+        actions={[
+          {
+            label: '  Ok  ',
+            onPress: () => this.setState({showInfoOfApp: false}),
+          },
+        ]}
+        icon={() => (
+          <Avatar.Icon
+            icon="help"
+            size={30}
+            color="white"
+            style={{backgroundColor: 'crimson'}}
+          />
+        )}>
+        <Text style={{color: 'rgba(0,0,0,0.5)', fontWeight: 'bold'}}>
+          If you have already created some lists, they will apperar here
+          if your haven't created any list you can create "new list"
+          anytime.
+        </Text>
+      </Banner>
+    );
+    //return null;
   };
 
   renderNoList = () => (
@@ -96,12 +126,11 @@ class CreateListUI extends Component {
     );
   };
 
-
   renderListItems = ({item, index}) => {
-    const { delGroceryList, delTodoList } = this.props;
+    const {delGroceryList, delTodoList} = this.props;
     const displayDate = item.createdOn;
     let showDate = displayDate.toString();
-    
+
     return (
       <>
         <TouchableRipple
@@ -126,11 +155,14 @@ class CreateListUI extends Component {
                   <Text
                     style={{
                       color: 'grey',
-                    }}>{showDate}</Text>
+                    }}>
+                    {showDate}
+                  </Text>
                 }
                 left={() => <List.Icon icon="calendar" color="#2196F3" />}
                 style={{padding: 0, color: 'green'}}
-                onPress={() => true
+                onPress={
+                  () => true
                   /*Alert.alert(
                     'List created on',
                     getFormattedDate(showDate),
@@ -223,6 +255,7 @@ class CreateListUI extends Component {
           : this.renderNoList();
       return (
         <>
+          {this.getHelp()}
           <View
             style={{
               flex: 1,

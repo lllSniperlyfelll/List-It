@@ -1,10 +1,11 @@
 import React from 'react';
-import {Text, View} from 'react-native';
+import {Text, View, Image} from 'react-native';
 import Cards from './Cards';
 import CreateList from './CreateList';
-import { createStackNavigator } from '@react-navigation/stack';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-
+import {createStackNavigator} from '@react-navigation/stack';
+import EvilIcon from "react-native-vector-icons/EvilIcons";
+import Logo from "../../assets/logo.png"
+import { TouchableRipple, Button } from 'react-native-paper';
 
 export default function ListCardComponent(props) {
   const cardListStack = createStackNavigator();
@@ -24,8 +25,32 @@ export default function ListCardComponent(props) {
             color: 'white',
           },
           headerLeft: () => (
-            <View style={{paddingLeft: 25}}>
-              <Icon name="tablet-dashboard" size={30} color="white" />
+            <View
+              style={{
+                flex: 1,
+                padding: 12,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Image
+                source={Logo}
+                style={{resizeMode: 'contain', height: 45, width: 45}}
+              />
+            </View>
+          ),
+          headerRight: () => (
+            <View
+              style={{
+                flex: 1,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Button
+                style={{borderRadius: 1000, elevation: 0}}
+                color="white"
+                onPress={() => alert('Settings')}>
+                <EvilIcon name="gear" size={27} color="white" />
+              </Button>
             </View>
           ),
         }}
@@ -34,7 +59,7 @@ export default function ListCardComponent(props) {
         name="CreateLists"
         component={CreateList}
         options={{
-          headerShown:false
+          headerShown: false,
         }}
       />
     </cardListStack.Navigator>

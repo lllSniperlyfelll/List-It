@@ -1,18 +1,55 @@
 import React, {Component} from 'react';
-import {Card, Title, Paragraph} from 'react-native-paper';
-import {View, StyleSheet} from 'react-native';
+import {Card, Title, Paragraph, Banner, Avatar} from 'react-native-paper';
+import {View, StyleSheet, Text} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 export default class Cards extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      showInfoOfApp: true,
+    };
+  }
 
+  getHelp = () => {
+    return (
+      <Banner
+        visible={this.state.showInfoOfApp}
+        actions={[
+          {
+            label: '  Ok  ',
+            onPress: () => this.setState({showInfoOfApp: false}),
+          },
+        ]}
+        icon={() => (
+          <Avatar.Icon
+            icon="help"
+            size={30}
+            color="white"
+            style={{backgroundColor: 'crimson'}}
+          />
+        )}>
+        <Text style={{color: 'rgba(0,0,0,0.5)', fontWeight: 'bold'}}>
+          List It helps to make lists with ease{'\n\n'}
+          1. Todo list can help your to make list of task your need to perform.
+          {'\n\n'}
+          2. Grocery list will help you not to forget any grocery when you go
+          shopping.{'\n\n'}
+          Your can disable these tutorials from settings
+        </Text>
+      </Banner>
+    );
+    //return null;
+  };
 
   pushToCrateNewLists = (navigation, listType) => {
     navigation.navigate('CreateLists', {listType});
-  }
+  };
   render() {
-    const {navigation} = this.props
+    const {navigation} = this.props;
     return (
       <ScrollView>
+        {this.getHelp()}
         <View
           style={{
             flex: 1,
