@@ -15,6 +15,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {connect} from 'react-redux';
 import Loading from '../Loading';
 import {deleteGroceryList, deleteTodoList} from '../Actions/ActionCreators';
+import SocialShare from '../SocialSharing/SocialShare';
 
 class ViewList extends Component {
   state = {
@@ -24,6 +25,7 @@ class ViewList extends Component {
     strikedItems: [],
     newAddedItemsList: null,
     closeSwipeout: true,
+    listName: null
   };
 
   getSwipeoutsRightButtons = (elementId) => {
@@ -213,7 +215,8 @@ class ViewList extends Component {
 
             <Button
               mode="contained"
-              icon="delete"
+              icon={() => <Icon name="trash" color="white" size={20} />}
+              size={20}
               style={{backgroundColor: 'red', marginTop: 7, color: 'white'}}
               onPress={() => {
                 Alert.alert('Delete List ?', 'Action cannot be undone', [
@@ -236,6 +239,8 @@ class ViewList extends Component {
               }}>
               Delete list
             </Button>
+
+            <SocialShare style={{ marginTop: 10 }} listToShare={newAddedItemsList} nameOfList={listName} />
           </View>
         </ScrollView>
       );

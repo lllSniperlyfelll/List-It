@@ -98,7 +98,10 @@ class CreateListUI extends Component {
 
 
   renderListItems = ({item, index}) => {
-    const {delGroceryList, delTodoList} = this.props;
+    const { delGroceryList, delTodoList } = this.props;
+    const displayDate = item.createdOn;
+    let showDate = displayDate.toString();
+    
     return (
       <>
         <TouchableRipple
@@ -123,14 +126,14 @@ class CreateListUI extends Component {
                   <Text
                     style={{
                       color: 'grey',
-                    }}>{`Create on:  ${item.createdOn.getDate()}/${item.createdOn.getMonth()}/${item.createdOn.getFullYear()}, ${item.createdOn.getHours()}:${item.createdOn.getMinutes()} `}</Text>
+                    }}>{showDate}</Text>
                 }
                 left={() => <List.Icon icon="calendar" color="#2196F3" />}
                 style={{padding: 0, color: 'green'}}
-                onPress={() =>
-                  Alert.alert(
+                onPress={() => true
+                  /*Alert.alert(
                     'List created on',
-                    getFormattedDate(item.createdOn),
+                    getFormattedDate(showDate),
                     [
                       {
                         text: 'Ok',
@@ -138,7 +141,7 @@ class CreateListUI extends Component {
                         onPress: () => true,
                       },
                     ],
-                  )
+                  )*/
                 }
               />
               <List.Item
