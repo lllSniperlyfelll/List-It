@@ -1,11 +1,12 @@
 import React from 'react';
-import {Text, View, Image} from 'react-native';
 import Cards from './Cards';
 import CreateList from './CreateList';
+import AppSettings from '../AppSettings/AppSettings';
+import Logo from '../../assets/logo.png';
+import {Text, View, Image} from 'react-native';
+import EvilIcon from 'react-native-vector-icons/EvilIcons';
+import {TouchableRipple, Button} from 'react-native-paper';
 import {createStackNavigator} from '@react-navigation/stack';
-import EvilIcon from "react-native-vector-icons/EvilIcons";
-import Logo from "../../assets/logo.png"
-import { TouchableRipple, Button } from 'react-native-paper';
 
 export default function ListCardComponent(props) {
   const cardListStack = createStackNavigator();
@@ -48,16 +49,24 @@ export default function ListCardComponent(props) {
               <Button
                 style={{borderRadius: 1000, elevation: 0}}
                 color="white"
-                onPress={() => alert('Settings')}>
+                onPress={() => props.navigation.navigate('App Settings')}>
                 <EvilIcon name="gear" size={27} color="white" />
               </Button>
             </View>
           ),
         }}
       />
+
       <cardListStack.Screen
         name="CreateLists"
         component={CreateList}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <cardListStack.Screen
+        name="App Settings"
+        component={AppSettings}
         options={{
           headerShown: false,
         }}

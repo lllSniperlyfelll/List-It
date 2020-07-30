@@ -25,12 +25,17 @@ import {getFormattedDate} from '../Healper';
  * and the option to create new list
  */
 class CreateListUI extends Component {
-  state = {
-    btnColor: '#4caf50',
-    alreadyCreatedLists: null,
-    listType: null,
-    showInfoOfApp: true
-  };
+  
+  constructor(props) {
+    super(props);
+    this.state = {
+      btnColor: '#4caf50',
+      alreadyCreatedLists: null,
+      listType: null,
+      showInfoOfApp: false,
+    };
+  }
+
 
   getColor = () => {
     const colors = ['#2196F3', 'crimson', '#4caf50', '#009688', '#673ab7'];
@@ -235,9 +240,11 @@ class CreateListUI extends Component {
   };
 
   componentDidMount() {
-    const {listType} = this.props;
+    const { listType } = this.props;
+    const { showTutorial } = this.props.tutorials;
     const btnColor = listType === 'todo' ? '#e91e63' : '#4caf50';
-    this.setState({listType, btnColor});
+    setTimeout(() => this.setState({showInfoOfApp: showTutorial}), 1000);
+    this.setState({listType, btnColor, });
     if (this.props.listToRender) {
       this.setState({
         alreadyCreatedLists: this.props.listToRender,
@@ -350,6 +357,7 @@ function CreateList(props) {
 const mapStateToProps = (state) => ({
   allTodoLists: state.todoLists,
   allGroceryLists: state.groceryLists,
+  tutorials: state.tutorials,
 });
 
 const mapDispatchToProps = (dispatch) => ({

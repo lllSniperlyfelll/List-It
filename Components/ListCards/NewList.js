@@ -29,7 +29,7 @@ class NewList extends Component {
     newItemToBeAdded: null,
     newAddedItemsList: [],
     newListId: null,
-    showInfoOfApp: true
+    showInfoOfApp: false,
   };
   /**
    *{
@@ -46,9 +46,17 @@ class NewList extends Component {
    */
 
   componentDidMount() {
+    setTimeout(
+      () => this.setState({showInfoOfApp: this.props.tutorials.showTutorial}),
+      1000,
+    );
+
     const {listType, storedListLength} = this.props;
     if (listType) {
-      this.setState({listType, newListId: storedListLength + 1});
+      this.setState({
+        listType,
+        newListId: storedListLength + 1,
+      });
     }
   }
 
@@ -175,7 +183,9 @@ class NewList extends Component {
           />
         </Portal>
         <ScrollView>
-          {this.getHelp("Add items in the list and alway's click save to save the list or you might lose your data")}
+          {this.getHelp(
+            "Add items in the list and alway's click save to save the list or you might lose your data",
+          )}
           <View style={{padding: 15}}>
             <TextInput
               label="Name your list ..."
@@ -330,10 +340,14 @@ class NewList extends Component {
   };
 }
 
+const mapStateToProps = (state) => ({
+  tutorials: state.tutorials,
+});
+
 const mapDispatchToProps = (dispatch) => ({
   addNewTodoListToStore: (newList) => dispatch(createNewTodoList(newList)),
   addNewGroceryListToStore: (newList) =>
     dispatch(createNewGroceryList(newList)),
 });
 
-export default connect(null, mapDispatchToProps)(NewList);
+export default connect(mapStateToProps, mapDispatchToProps)(NewList);

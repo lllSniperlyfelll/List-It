@@ -6,6 +6,7 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start --port 3001 --host 192.168.1.105",
+    "fresh": "react-native start --port 3001 --host 192.168.1.105 --reset-cache",
     "test": "jest",
     "postinstall": "npx jetify"
   },

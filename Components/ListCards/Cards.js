@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
+import {connect} from 'react-redux';
 import {Card, Title, Paragraph, Banner, Avatar} from 'react-native-paper';
 import {View, StyleSheet, Text} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-export default class Cards extends Component {
+class Cards extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -41,6 +42,12 @@ export default class Cards extends Component {
     );
     //return null;
   };
+
+
+  UNSAFE_componentWillMount() {
+    const {showTutorial} = this.props.tutorials;
+    this.setState({showInfoOfApp: showTutorial});
+  }
 
   pushToCrateNewLists = (navigation, listType) => {
     navigation.navigate('CreateLists', {listType});
@@ -115,6 +122,12 @@ export default class Cards extends Component {
     );
   }
 }
+
+const mapStateToProps = (state) => ({
+  tutorials: state.tutorials,
+});
+
+export default connect(mapStateToProps)(Cards);
 
 const CardsStyles = StyleSheet.create({
   cardContainer: {

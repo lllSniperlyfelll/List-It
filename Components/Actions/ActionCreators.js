@@ -3,6 +3,8 @@ import {
   CREATE_NEW_TODO_LIST,
   DETELE_GROCERY_LIST,
   DETELE_TODO_LIST,
+  ENABLE_TUTORIALS,
+  DISABLE_TUTORIALS,
 } from './ActionTypes';
 
 export const createNewTodoList = (newList) => (dispatch) => {
@@ -36,3 +38,10 @@ const getDeleteGroceryListAction = (listId) => ({
   type: DETELE_GROCERY_LIST,
   payload: listId,
 });
+
+export const enableTutorials = () => (dispatch) => {
+  dispatch({type: ENABLE_TUTORIALS});
+};
+export const disableTutorials = () => (dispatch) => {
+  dispatch({type: DISABLE_TUTORIALS});
+};

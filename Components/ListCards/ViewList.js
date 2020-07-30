@@ -37,7 +37,7 @@ class ViewList extends Component {
       newAddedItemsList: null,
       closeSwipeout: false,
       listName: null,
-      showInfoOfApp: true,
+      showInfoOfApp: false,
     };
   }
 
@@ -148,12 +148,7 @@ class ViewList extends Component {
 
   getListItems() {
     const map = [];
-    const {
-      strikedItems,
-      newAddedItemsList,
-      closeSwipeout,
-      swipeTutorial,
-    } = this.state;
+    const {strikedItems, newAddedItemsList, closeSwipeout} = this.state;
     for (let item in newAddedItemsList) {
       const itemId = newAddedItemsList[item].id;
       const strikeTextStyle =
@@ -208,6 +203,10 @@ class ViewList extends Component {
   componentDidMount() {
     const {listType} = this.props.routes.params;
     const {listId} = this.props.routes.state.routes[1].params;
+    const {showTutorial} = this.props.tutorials;
+    setTimeout(() => {
+      this.setState({showInfoOfApp: showTutorial});
+    }, 1000);
     this.setState({
       listId,
       listType,
@@ -227,7 +226,6 @@ class ViewList extends Component {
           newAddedItemsList: selectedList[0].listItems,
           listName: selectedList[0].name,
         });
-
       }
     }
   }
@@ -239,15 +237,12 @@ class ViewList extends Component {
   render() {
     if (this.state.newAddedItemsList) {
       const {imageUrl} = this.state;
-      const {
-        newAddedItemsList,
-        listName,
-        listId,
-        listType,
-      } = this.state;
+      const {newAddedItemsList, listName, listId, listType} = this.state;
       return (
         <ScrollView>
-          {this.getHelp("Swipe from 'Right to Left' on items in list to see more options.")}
+          {this.getHelp(
+            "Swipe from 'Right to Left' on items in list to see more options.",
+          )}
           <View style={{flex: 1, padding: 5}}>
             <ImageBackground
               source={imageUrl}
@@ -383,6 +378,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => ({
   allTodoLists: state.todoLists,
   allGroceryLists: state.groceryLists,
+  tutorials: state.tutorials,
 });
 const mapDispatchToProps = (dispatch) => ({
   delTodoList: (listId) => dispatch(deleteTodoList(listId)),
